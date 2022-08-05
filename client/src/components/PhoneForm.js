@@ -10,7 +10,6 @@ function PhoneForm({ phoneSubmitAction }) {
     } = useForm({ defaultValues: { code: "+7" }, mode: "onChange" });
 
     const onSubmit = (data) => {
-        console.log(data);
         phoneSubmitAction(data);
     };
     const showError = (errors) => {

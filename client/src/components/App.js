@@ -2,8 +2,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import "./App.css";
 import { useEffect, useState } from "react";
 import PhoneForm from "./PhoneForm";
-import axios from "axios"
-
+import axios from "axios";
 
 let initClient = new W3CWebSocket("ws://127.0.0.1:8000");
 
@@ -13,20 +12,18 @@ function App() {
     let [client, setClient] = useState(initClient);
 
     useEffect(() => {
-        axios.get("http://localhost:7000/phones")
-        .then(res => {
+        axios.get("http://localhost:7000/phones").then((res) => {
             const phoneHistory = res.data;
             setPhoneList(phoneHistory);
-        })
+        });
     }, []);
 
     useEffect(() => {
-        console.log("Use effect")
+        console.log("Use effect");
         client.onopen = () => {
-            console.log("Connection open")
+            console.log("Connection open");
             setConnected(true);
         };
-
 
         client.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
@@ -34,20 +31,34 @@ function App() {
         };
 
         client.onclose = () => {
-            console.log("Connection close")
-            //setConnected(false);
-        }
-        client.onerror = () => {
-            console.log("Connection error")
-            setTimeout(function() {
+            console.log("Connection close");
+            setTimeout(function () {
                 console.log("Set client");
                 setClient(new W3CWebSocket("ws://127.0.0.1:8000"));
             }, 10000);
-        }
+        };
+        client.onerror = () => {
+            console.log("Connection error");
+        };
     }, [client]);
     const phoneSubmitAction = (data) => {
-        client.send(JSON.stringify(data))
-    }
+        //client.send(JSON.stringify(data))
+        axios
+            .post(
+                "http://localhost:7000/phones",
+                {
+                    code: data.code,
+                    number: data.number,
+                },
+                { dataType: "json" }
+            )
+            .catch(function (error) {
+                console.log(
+                    "Something wrong with db. Can't update information"
+                );
+                console.log(error);
+            });
+    };
     return (
         <div className="App">
             {connected ? (
@@ -55,7 +66,11 @@ function App() {
                     <PhoneForm phoneSubmitAction={phoneSubmitAction} />
                     <ol>
                         {phoneList.map((phone) => {
-                            return <li key={phone.id}>{phone.code} {phone.number}</li>;
+                            return (
+                                <li key={phone.id}>
+                                    {phone.code} {phone.number}
+                                </li>
+                            );
                         })}
                     </ol>
                 </>

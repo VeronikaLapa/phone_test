@@ -7,8 +7,9 @@ const host = "localhost";
 const express = require('express'),
     app = express();
 const cors = require('cors')
-
+const bodyParser = require('body-parser');
 app.use(cors())
+app.use(bodyParser.json());
 app.listen(port, host, () =>
     console.log(`Server listens http://${host}:${port}`)
 )
@@ -18,12 +19,6 @@ ws.wsServer.on('request', function(request) {
       if (message.type === "utf8") {
         const dataFromClient = JSON.parse(message.utf8Data);
         console.log(dataFromClient);
-        db.Phone.create({
-          code: dataFromClient.code,
-          number: dataFromClient.number,
-        }).then(() => {
-          ws.sendMessage(JSON.stringify(dataFromClient));
-        });
       }
     });
     connectionInfo.connection.on('close', function() {
@@ -37,6 +32,21 @@ app.get('/phones', (req, res) => {
     }).then((allPhones) => {
         res.send(allPhones);
     })
+})
+app.post('/phones', (req, res) => {
+    console.log(req);
+    const code = req.body.code;
+    const number = req.body.number;
+    db.Phone.create({
+        code: code,
+        number: number,
+    }).then((user) => {
+        ws.sendMessage(JSON.stringify({code, number}));
+        res.send(user);
+    }).catch((err) => {
+        res.error();
+    });
+
 })
 
 
