@@ -1,0 +1,17 @@
+{
+    "data": [
+        {
+            "region": "Russia",
+            "code": "+7"
+        },
+        {
+            "region": "Belarus",
+            "code": "+375"
+        },
+        {
+            "region": "Austria",
+            "code": "+43"
+        }
+
+    ]
+}
