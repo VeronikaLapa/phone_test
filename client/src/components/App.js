@@ -45,8 +45,8 @@ function App() {
             }, 10000);
         }
     }, [client]);
-    const phoneSubmitAction = (code, number) => {
-        client.send(JSON.stringify({code,number}))
+    const phoneSubmitAction = (data) => {
+        client.send(JSON.stringify(data))
     }
     return (
         <div className="App">
@@ -55,7 +55,7 @@ function App() {
                     <PhoneForm phoneSubmitAction={phoneSubmitAction} />
                     <ol>
                         {phoneList.map((phone) => {
-                            return <li key={phone.number}>{phone.code} {phone.number}</li>;
+                            return <li key={phone.id}>{phone.code} {phone.number}</li>;
                         })}
                     </ol>
                 </>

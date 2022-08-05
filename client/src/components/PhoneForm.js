@@ -1,43 +1,79 @@
-import {useState} from "react";
 import REGIONS from "../regions.json";
-import styles from "./PhoneForm.module.css"
+import styles from "./PhoneForm.module.css";
+import { useForm } from "react-hook-form";
 
-function PhoneForm ({phoneSubmitAction}) {
-    
-    let [phoneInput, setPhoneInput] = useState("");
-    let [codeSelect, setCodeSelect] = useState("+7");
+function PhoneForm({ phoneSubmitAction }) {
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+    } = useForm({ defaultValues: { code: "+7" }, mode: "onChange" });
 
-    const handleSubmit = (e) => {
-        phoneSubmitAction(codeSelect, phoneInput);
-        setPhoneInput("");
-        e.preventDefault();
+    const onSubmit = (data) => {
+        console.log(data);
+        phoneSubmitAction(data);
     };
-
-    const handleChange = (event) => {
-        setPhoneInput(event.target.value);
+    const showError = (errors) => {
+        if (errors.number) {
+            if (errors.number.type === "required") {
+                return <span role="alert">Number is required</span>;
+            }
+            if (errors.number.type === "minLength") {
+                return (
+                    <span role="alert">
+                        Number should contains at least 3 digits
+                    </span>
+                );
+            }
+            if (errors.number.type === "maxLength") {
+                return (
+                    <span role="alert">
+                        Number can not be longer than 10 digits
+                    </span>
+                );
+            }
+            if (errors.number.type === "pattern") {
+                return (
+                    <span role="alert">
+                        Wrong format. Only digits are available
+                    </span>
+                );
+            }
+        }
     };
-
-    const handleCodeChange = (e) => {
-        setCodeSelect(e.target.value)
-        console.log(e.target.key)
-    }
     return (
-        <form onSubmit={handleSubmit} className={styles.form}>
-            <label>
-                Телефон:
-                <select onChange={handleCodeChange}>
-                    {REGIONS.data.map((region) => {return <option key={region.code}>{region.code}</option>})}
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            {errors.number &&
+                <div className={styles.error}>
+                    {showError(errors)}
+                </div>
+            }
+            <div>
+                <label>Телефон:</label>
+                <select {...register("code", { required: true })}>
+                    {REGIONS.data.map((region) => {
+                        return (
+                            <option key={`${region.code}`} value={region.code}>
+                                {`${region.region} ${region.code}`}
+                            </option>
+                        );
+                    })}
                 </select>
                 <input
-                    type="text"
-                    name="phone"
-                    value={phoneInput}
-                    onChange={handleChange}
+                    type="tel"
+                    placeholder="Number"
+                    {...register("number", {
+                        required: true,
+                        pattern: /^\d+$/,
+                        minLength: 3,
+                        maxLength: 10,
+                    })}
+                    aria-invalid={errors.number ? "true" : "false"}
                 />
-            </label>
+            </div>
             <input type="submit" value="Отправить" />
         </form>
     );
 }
 
-export default PhoneForm
+export default PhoneForm;

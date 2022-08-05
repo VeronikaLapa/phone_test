@@ -2,4 +2,11 @@
     display: flex;
     padding: 5px;
     border: solid grey 1px;
+    flex-direction: column;
+}
+.error {
+    border: solid #940b0b 1px;
+    background-color: #ffabab;
+    padding: 5px;
+    border-radius: 3px;
 }
