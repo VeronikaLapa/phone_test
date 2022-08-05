@@ -5,12 +5,12 @@ import PhoneForm from "./PhoneForm";
 import axios from "axios"
 
 
-//let client = new W3CWebSocket("ws://127.0.0.1:8000");
+let initClient = new W3CWebSocket("ws://127.0.0.1:8000");
 
 function App() {
     let [phoneList, setPhoneList] = useState([]);
     let [connected, setConnected] = useState(true);
-    let [client, setClient] = useState(new W3CWebSocket("ws://127.0.0.1:8000"));
+    let [client, setClient] = useState(initClient);
 
     useEffect(() => {
         axios.get("http://localhost:7000/phones")
