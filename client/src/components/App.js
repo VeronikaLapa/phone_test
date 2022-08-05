@@ -1,15 +1,15 @@
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import "./App.css";
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import PhoneForm from "./PhoneForm";
 import axios from "axios";
-import {useDispatch} from 'react-redux';
-import {ACTION_TYPES} from "../store";
+import { useDispatch } from "react-redux";
+import { ACTION_TYPES } from "../store";
 import PhoneList from "./PhoneList";
 
-
-
-let initClient = new W3CWebSocket("ws://127.0.0.1:8000");
+let initClient = new W3CWebSocket(
+    `ws://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`
+);
 
 function App() {
     let [connected, setConnected] = useState(true);
@@ -17,10 +17,14 @@ function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        axios.get("http://localhost:7000/phones").then((res) => {
-            const phoneHistory = res.data;
-            dispatch({type:ACTION_TYPES.setList, payload: phoneHistory});
-        });
+        axios
+            .get(
+                `http://${process.env.REACT_APP_DB_HOST}:${process.env.REACT_APP_DB_PORT}/phones`
+            )
+            .then((res) => {
+                const phoneHistory = res.data;
+                dispatch({ type: ACTION_TYPES.setList, payload: phoneHistory });
+            });
     }, [dispatch]);
 
     useEffect(() => {
@@ -32,7 +36,7 @@ function App() {
 
         client.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
-            dispatch({type:ACTION_TYPES.addPhone, payload: dataFromServer});
+            dispatch({ type: ACTION_TYPES.addPhone, payload: dataFromServer });
             //setPhoneList((p) => [dataFromServer, ...p]);
         };
 
@@ -40,7 +44,11 @@ function App() {
             console.log("Connection close");
             setTimeout(function () {
                 console.log("Set client");
-                setClient(new W3CWebSocket("ws://127.0.0.1:8000"));
+                setClient(
+                    new W3CWebSocket(
+                        `ws://${process.env.REACT_APP_WS_HOST}:${process.env.REACT_APP_WS_PORT}`
+                    )
+                );
             }, 10000);
         };
         client.onerror = () => {
@@ -65,16 +73,16 @@ function App() {
             });
     }, []);
     return (
-            <div className="App">
-                {connected ? (
-                    <>
-                        <PhoneForm phoneSubmitAction={phoneSubmitAction} />
-                        <PhoneList/>
-                    </>
-                ) : (
-                    <div>No connection</div>
-                )}
-            </div>
+        <div className="App">
+            {connected ? (
+                <>
+                    <PhoneForm phoneSubmitAction={phoneSubmitAction} />
+                    <PhoneList />
+                </>
+            ) : (
+                <div>No connection</div>
+            )}
+        </div>
     );
 }
 
