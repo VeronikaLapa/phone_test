@@ -1,22 +1,27 @@
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import "./App.css";
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import PhoneForm from "./PhoneForm";
 import axios from "axios";
+import {useDispatch} from 'react-redux';
+import {ACTION_TYPES} from "../store";
+import PhoneList from "./PhoneList";
+
+
 
 let initClient = new W3CWebSocket("ws://127.0.0.1:8000");
 
 function App() {
-    let [phoneList, setPhoneList] = useState([]);
     let [connected, setConnected] = useState(true);
     let [client, setClient] = useState(initClient);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         axios.get("http://localhost:7000/phones").then((res) => {
             const phoneHistory = res.data;
-            setPhoneList(phoneHistory);
+            dispatch({type:ACTION_TYPES.setList, payload: phoneHistory});
         });
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         console.log("Use effect");
@@ -27,7 +32,8 @@ function App() {
 
         client.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
-            setPhoneList((p) => [dataFromServer, ...p]);
+            dispatch({type:ACTION_TYPES.addPhone, payload: dataFromServer});
+            //setPhoneList((p) => [dataFromServer, ...p]);
         };
 
         client.onclose = () => {
@@ -40,9 +46,8 @@ function App() {
         client.onerror = () => {
             console.log("Connection error");
         };
-    }, [client]);
-    const phoneSubmitAction = (data) => {
-        //client.send(JSON.stringify(data))
+    }, [client, dispatch]);
+    const phoneSubmitAction = useCallback((data) => {
         axios
             .post(
                 "http://localhost:7000/phones",
@@ -58,26 +63,18 @@ function App() {
                 );
                 console.log(error);
             });
-    };
+    }, []);
     return (
-        <div className="App">
-            {connected ? (
-                <>
-                    <PhoneForm phoneSubmitAction={phoneSubmitAction} />
-                    <ol>
-                        {phoneList.map((phone) => {
-                            return (
-                                <li key={phone.id}>
-                                    {phone.code} {phone.number}
-                                </li>
-                            );
-                        })}
-                    </ol>
-                </>
-            ) : (
-                <div>No connection</div>
-            )}
-        </div>
+            <div className="App">
+                {connected ? (
+                    <>
+                        <PhoneForm phoneSubmitAction={phoneSubmitAction} />
+                        <PhoneList/>
+                    </>
+                ) : (
+                    <div>No connection</div>
+                )}
+            </div>
     );
 }
 
