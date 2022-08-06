@@ -56,7 +56,7 @@ function App() {
         };
     }, [client, dispatch]);
     const phoneSubmitAction = useCallback((data) => {
-        axios
+        return axios
             .post(
                 "http://localhost:7000/phones",
                 {
@@ -64,13 +64,7 @@ function App() {
                     number: data.number,
                 },
                 { dataType: "json" }
-            )
-            .catch(function (error) {
-                console.log(
-                    "Something wrong with db. Can't update information"
-                );
-                console.log(error);
-            });
+            );
     }, []);
     return (
         <div className="App">

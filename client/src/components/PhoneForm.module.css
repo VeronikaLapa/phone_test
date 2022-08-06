@@ -1,8 +1,12 @@
 .form {
     display: flex;
-    padding: 5px;
+    padding: 7px;
     border: solid grey 1px;
     flex-direction: column;
+    border-radius: 5px;
+}
+.form label {
+    font-weight: bold;
 }
 .error {
     border: solid #940b0b 1px;

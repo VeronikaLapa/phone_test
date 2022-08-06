@@ -1,16 +1,24 @@
 import REGIONS from "../regions.json";
 import styles from "./PhoneForm.module.css";
 import { useForm } from "react-hook-form";
+import {useEffect} from "react";
 
 function PhoneForm({ phoneSubmitAction }) {
     const {
         register,
         formState: { errors },
         handleSubmit,
-    } = useForm({ defaultValues: { code: "+7" }, mode: "onChange" });
+        reset
+    } = useForm({ defaultValues: { code: "+7", number: "" }, mode: "all" });
+
+    useEffect(() => {
+        reset();
+    },[reset])
 
     const onSubmit = (data) => {
-        phoneSubmitAction(data);
+        phoneSubmitAction(data).then((res) => {
+            reset();
+        });
     };
     const showError = (errors) => {
         if (errors.number) {
@@ -47,8 +55,8 @@ function PhoneForm({ phoneSubmitAction }) {
                     {showError(errors)}
                 </div>
             }
+            <label>Phone number:</label>
             <div>
-                <label>Телефон:</label>
                 <select {...register("code", { required: true })}>
                     {REGIONS.data.map((region) => {
                         return (
