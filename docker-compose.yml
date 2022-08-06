@@ -6,12 +6,29 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - '5432:5432'
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habrpguser -d habrdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   server:
     build:
       context: server
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
-      - '7000:7000'
-      - '8000:8000'
+      - 7000:7000
+      - 8000:8000
+
+  client:
+    build:
+      context: client
+    depends_on:
+      server:
+        condition: service_healthy
+    ports:
+      - 3000:3000
