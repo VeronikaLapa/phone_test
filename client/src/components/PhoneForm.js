@@ -50,13 +50,13 @@ function PhoneForm({ phoneSubmitAction }) {
     };
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <label>Phone number:</label>
             {errors.number &&
                 <div className={styles.error}>
                     {showError(errors)}
                 </div>
             }
-            <label>Phone number:</label>
-            <div>
+            <div className={styles.input}>
                 <select {...register("code", { required: true })}>
                     {REGIONS.data.map((region) => {
                         return (

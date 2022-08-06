@@ -4,13 +4,47 @@
     border: solid grey 1px;
     flex-direction: column;
     border-radius: 5px;
+    min-width: 300px;
 }
 .form label {
     font-weight: bold;
+    margin-bottom: 5px;
 }
 .error {
     border: solid #940b0b 1px;
     background-color: #ffabab;
     padding: 5px;
     border-radius: 3px;
+}
+.form select {
+    border: none;
+    outline: none;
+}
+
+.form input[type="tel"] {
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+    width: 60%;
+}
+input[type="tel"]:focus {
+    background: none;
+    border-color: #000d3b;
+}
+.input {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+}
+.form input[type="submit"] {
+    -webkit-appearance: none;
+    outline: none;
+    width: fit-content;
+    align-self: end;
+    color: #000d3b;
+    background-color: #b3c1ff;
+    border-color: #98aaff;
+    border-radius: 4px;
+    border-style: solid;
+    cursor: pointer;
 }
