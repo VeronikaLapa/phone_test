@@ -10,8 +10,8 @@ const cors = require("cors");
 
 const app = express().use(cors()).use(bodyParser.json());
 
-const port = parseInt(process.env.WS_PORT);
-const host = process.env.WS_HOST;
+const port = parseInt(process.env.SERVER_PORT);
+const host = process.env.SERVER_HOST;
 app.listen(port, host, () =>
   console.log(`Server listens http://${host}:${port}`)
 );
