@@ -1,0 +1,18 @@
+.container {
+    margin: 10px 0;
+}
+.list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.list_item {
+    height: 25px;
+    margin-left: 5px;
+}
+.list_item:hover {
+    background-color: #d3ddff;
+}
+.list_header {
+    font-weight: bold;
+}
